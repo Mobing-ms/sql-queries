@@ -1,0 +1,15 @@
+select distinct
+  doctor_id,
+  concat(first_name, ' ', last_name),
+  first_value(a.admission_date) over(
+    partition by d.doctor_id
+    order by a.admission_date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+  ) as first_admission,
+  Last_value(a.admission_date) over(
+    partition by d.doctor_id
+    order by a.admission_date
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+  ) as last_admission
+from admissions a
+  join doctors d on a.attending_doctor_id = d.doctor_id
